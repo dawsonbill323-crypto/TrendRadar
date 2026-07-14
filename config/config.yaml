@@ -111,42 +111,48 @@ platforms:
 # max_age_days: 可选，覆盖全局 freshness_filter.max_age_days
 # ===============================================================
 rss:
-  enabled: false                      # 关闭 RSS，专注热搜信号
+  enabled: true                       # 启用 RSS，补充国外信号
 
-  # 文章新鲜度过滤（过滤超龄旧文章，避免重复推送）
-  # 仅在推送阶段过滤，所有文章仍会存入数据库
   freshness_filter:
-    enabled: true                     # 是否启用新鲜度过滤（true=启用, false=关闭）
+    enabled: true
+    max_age_days: 1                   # 当天内容
 
-    max_age_days: 1                   # 最大文章年龄（天）
-                                      # - 正整数：只推送 N 天内的文章
-                                      # - 0：禁用过滤，推送所有文章
-
-  # 单个 feed 可配置 max_age_days 覆盖全局设置：
-  # - 不配置：使用全局 freshness_filter.max_age_days（默认 3 天）
-  # - 正整数：覆盖全局设置，只推送此天数内的文章
-  # - 0：禁用此频道的新鲜度过滤，推送所有文章
   feeds:
-    - id: "hacker-news"
-      name: "Hacker News"
-      url: "https://hnrss.org/frontpage"
+    # ── 新品/趋势发现 ──
+    - id: "producthunt"
+      name: "Product Hunt 新品"
+      url: "https://www.producthunt.com/feed"
 
-    - id: "ruanyifeng"
-      name: "阮一峰的网络日志"
-      url: "http://www.ruanyifeng.com/blog/atom.xml"
-      enabled: false                  # 禁用
-      # max_age_days: 3               # 示例：推送 3 天内的文章（更新较慢的博客）
-     
-    - id: "yahoo-finance"
-      name: "雅虎财经"
-      url: "https://finance.yahoo.com/news/rssindex"
+    - id: "hn-show"
+      name: "Hacker News ShowHN"
+      url: "https://hnrss.org/show"
 
-    # 自定义源示例
-    # - id: "custom-feed"
-    #   name: "自定义源"
-    #   url: "https://example.com/feed.xml"
-    #   enabled: false
-    #   max_age_days: 0               # 示例：禁用过滤，推送所有文章
+    # ── YouTube 产品评测频道 ──
+    - id: "yt-mkbhd"
+      name: "MKBHD 数码评测"
+      url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCBJycsmduvYEL83R_U4JriQ"
+
+    - id: "yt-tech-today"
+      name: "This Is Tech Today"
+      url: "https://www.youtube.com/feeds/videos.xml?channel_id=UCEAMLkMKtq6YhmaZdUT1ywA"
+
+    # Unbox Therapy: RSS 不可用（YouTube 限制）
+
+    # ── Google News 消费品关键词 ──
+    - id: "googlenews-gadgets"
+      name: "Google News 新数码"
+      url: "https://news.google.com/rss/search?q=new+gadget+product+launch&hl=en-US&gl=US&ceid=US:en"
+
+    # ── TikTok 替代方案：用 Google News 搜 TikTok 爆款 ──
+    - id: "googlenews-tiktok-viral"
+      name: "TikTok 爆款产品"
+      url: "https://news.google.com/rss/search?q=tiktok+viral+product+%22made+me+buy+it%22&hl=en-US&gl=US&ceid=US:en"
+
+    # ── 行业博客 ──
+    - id: "trendhunter"
+      name: "TrendHunter 趋势"
+      url: "https://www.trendhunter.com/rss"
+      enabled: false                  # 默认关闭，需要时开启
 
 
 # ===============================================================
@@ -221,14 +227,15 @@ display:
   region_order:
     - new_items                           # 1️⃣ 新增热点区域
     - hotlist                             # 2️⃣ 热榜区域（AI 智能筛选）
-    - ai_analysis                         # 3️⃣ AI 分析简报
+    - rss                                 # 3️⃣ RSS 国际信号
+    - ai_analysis                         # 4️⃣ AI 分析简报
 
   # 推送区域开关
   regions:
     hotlist: true                     # 热榜区域：AI 智能筛选
     new_items: true                   # 新增热点区域
 
-    rss: false                        # RSS 关闭
+    rss: true                         # RSS：国外选品信号
     standalone: false                 # 独立展示区关闭
     ai_analysis: true                 # AI 分析简报（Gemini 免费）
 
@@ -414,7 +421,7 @@ ai_analysis:
   max_news_for_analysis: 150        # 参与分析的新闻数量上限（控制 token 成本的关键项）
                                     # 热榜优先占用配额，RSS 用剩余配额，独立展示区不受此限制
 
-  include_rss: false                # 是否包含 RSS 内容进行分析（true=包含, false=不包含）
+  include_rss: true                 # 包含 RSS (YouTube等) 进入 AI 分析
   include_standalone: true          # 是否纳入独立展示区数据（true=纳入, false=不纳入）
 
   include_rank_timeline: true       # 排名时间线详细程度
